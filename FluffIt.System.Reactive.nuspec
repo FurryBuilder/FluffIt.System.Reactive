@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>FluffIt.System.Reactive</id>
+        <version>0.1.0.1</version>
+        <title>FluffIt.System.Reactive</title>
+        <authors>Furry Builder</authors>
+        <owners>Furry Builder</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>An ultra light-weight dependency injection container built around the power of factories.</description>
+    </metadata>
+    <files>
+        <file src="FluffIt.System.Reactive.WPF\bin\Release\FluffIt.System.Reactive.WPF.dll" target="lib\net45\FluffIt.System.Reactive.WPF.dll" />
+        <file src="FluffIt.System.Reactive.WinRT\bin\Release\FluffIt.System.Reactive.WinRT.dll" target="lib\netcore451\FluffIt.System.Reactive.WinRT.dll" />
+        <file src="FluffIt.System.Reactive.WinPRT\bin\Release\FluffIt.System.Reactive.WinPRT.dll" target="lib\wp8\FluffIt.System.Reactive.WinPRT.dll" />
+    </files>
+</package>

@@ -1,0 +1,36 @@
+http://cloc.sourceforge.net v 1.60  T=0.15 s (119.9 files/s, 8771.2 lines/s)
+--------------------------------------------------------------------------------------------------------------------------------------------
+File                                                                                                     blank        comment           code
+--------------------------------------------------------------------------------------------------------------------------------------------
+..\FluffIt.System.Reactive.Tests\ObservableExtensionsTests\GivenValueObservable.cs                          48              0            154
+..\FluffIt.System.Reactive.WinRT\FluffIt.System.Reactive.WinRT.csproj                                        0              7            120
+..\FluffIt.System.Reactive.WinPRT\FluffIt.System.Reactive.WinPRT.csproj                                      0              7             99
+..\FluffIt.System.Reactive.Tests\DisposableExtensionsTests\GivenSupportedDisposable.cs                      30              0             94
+..\FluffIt.System.Reactive.Tests\FluffIt.System.Reactive.Tests.csproj                                        0              7             94
+..\FluffIt.System.Reactive\ObservableExtensions.cs                                                          16             54             83
+..\FluffIt.System.Reactive.WPF\FluffIt.System.Reactive.WPF.csproj                                            0              7             60
+..\FluffIt.System.Reactive\FluffIt.System.Reactive.csproj                                                    0              7             54
+..\FluffIt.System.Reactive.Tests\DisposableExtensionsTests\GivenNotSupportedDisposable.cs                   12              0             52
+..\FluffIt.System.Reactive\DisposableExtensions.cs                                                          10              0             51
+..\FluffIt.System.Reactive.Tests\ObservableExtensionsTests\GivenUnitObservable.cs                           16              0             47
+..\FluffIt.System.Reactive.WinPRT\Properties\AssemblyInfo.cs                                                 4             16             17
+..\FluffIt.System.Reactive\Properties\AssemblyInfo.cs                                                        9             17             16
+..\FluffIt.System.Reactive.WPF\Properties\AssemblyInfo.cs                                                    4             17             15
+..\FluffIt.System.Reactive.Tests\Properties\AssemblyInfo.cs                                                  4             17             15
+..\FluffIt.System.Reactive.WinRT\Properties\AssemblyInfo.cs                                                  2             13             14
+..\AppMultiPackages.xml                                                                                      0              0              6
+..\Tools\Clockr.bat                                                                                          0              0              2
+--------------------------------------------------------------------------------------------------------------------------------------------
+SUM:                                                                                                       155            169            993
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+Language                     files          blank        comment           code
+-------------------------------------------------------------------------------
+C#                              11            155            134            558
+MSBuild scripts                  5              0             35            427
+XML                              1              0              0              6
+DOS Batch                        1              0              0              2
+-------------------------------------------------------------------------------
+SUM:                            18            155            169            993
+-------------------------------------------------------------------------------
