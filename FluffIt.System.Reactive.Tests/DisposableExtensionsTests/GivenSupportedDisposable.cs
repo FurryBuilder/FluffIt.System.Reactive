@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Reactive.Disposables;
-
-using Fluff.Extensions;
-using FluffIt;
 using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Fluff.Tests.Extensions.DisposableExtensionsTests
+namespace FluffIt.System.Reactive.Tests.DisposableExtensionsTests
 {
 	[TestClass]
 	public class GivenSupportedDisposable

@@ -2,9 +2,8 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Threading;
-using FluffIt;
 
-namespace Fluff.Extensions
+namespace FluffIt.System.Reactive
 {
 	public static class DisposableExtensions
 	{

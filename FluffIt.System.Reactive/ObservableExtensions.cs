@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using FluffIt;
 
-namespace Fluff.Extensions
+namespace FluffIt.System.Reactive
 {
 	public static class ObservableExtensions
 	{

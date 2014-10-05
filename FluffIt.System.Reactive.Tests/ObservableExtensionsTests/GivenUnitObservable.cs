@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
-
-using Fluff.Extensions;
-
 using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Fluff.Tests.Extensions.ObservableExtensionsTests
+namespace FluffIt.System.Reactive.Tests.ObservableExtensionsTests
 {
 	[TestClass]
 	public class GivenUnitObservable
