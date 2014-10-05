@@ -112,25 +112,29 @@ namespace FluffIt.System.Reactive
 		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
 		/// <param name="source">Sequence to alter</param>
 		/// <returns>A new sequence of values and their previous value</returns>
-		public static IObservable<PreviousValueWrapper<TSource>> WithPreviousValue<TSource>(this IObservable<TSource> source)
+		public static IObservable<PhasingWrapper<TSource>> WithPreviousValue<TSource>(this IObservable<TSource> source)
 		{
 			var previousValue = default(TSource);
 
 			return source.Select(v =>
 			{
-				var wrapper = new PreviousValueWrapper<TSource>(previousValue, v);
+				var wrapper = new PhasingWrapper<TSource>(previousValue, v);
 				previousValue = v;
 				return wrapper;
 			});
 		}
 
-		public class PreviousValueWrapper<T>
+		/// <summary>
+		/// Wraps values from an observable sequence with the previous value from the same sequence.
+		/// </summary>
+		/// <typeparam name="T">Type of values in the sequence</typeparam>
+		public class PhasingWrapper<T>
 		{
 			public T PreviousValue { get; private set; }
 
 			public T CurrentValue { get; private set; }
 
-			public PreviousValueWrapper(T previousValue, T currentValue)
+			public PhasingWrapper(T previousValue, T currentValue)
 			{
 				PreviousValue = previousValue;
 				CurrentValue = currentValue;
@@ -145,9 +149,9 @@ namespace FluffIt.System.Reactive
 		/// <param name="source">Sequence to alter</param>
 		/// <param name="indexor">Method to generate an index from a source value</param>
 		/// <returns>A new sequence of values and their indexes</returns>
-		public static IObservable<IndexWrapper<TSource, TIndex>> WithIndex<TSource, TIndex>(this IObservable<TSource> source, Func<TSource, TIndex> indexor)
+		public static IObservable<IndexingWrapper<TSource, TIndex>> WithIndex<TSource, TIndex>(this IObservable<TSource> source, Func<TSource, TIndex> indexor)
 		{
-			return source.Select(v => new IndexWrapper<TSource, TIndex>(v, indexor.Invoke(v)));
+			return source.Select(v => new IndexingWrapper<TSource, TIndex>(v, indexor.Invoke(v)));
 		}
 
 		/// <summary>
@@ -156,20 +160,25 @@ namespace FluffIt.System.Reactive
 		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
 		/// <param name="source">Sequence to alter</param>
 		/// <returns>A new sequence of values and their indexes</returns>
-		public static IObservable<IndexWrapper<TSource, int>> WithIndex<TSource>(this IObservable<TSource> source)
+		public static IObservable<IndexingWrapper<TSource, int>> WithIndex<TSource>(this IObservable<TSource> source)
 		{
 			var count = 0;
 
-			return source.Select(v => new IndexWrapper<TSource, int>(v, ++count));
+			return source.Select(v => new IndexingWrapper<TSource, int>(v, ++count));
 		}
 
-		public class IndexWrapper<TValue, TIndex>
+		/// <summary>
+		/// Wraps values from an observable sequence with indexing information.
+		/// </summary>
+		/// <typeparam name="TValue">Type of values in the sequence</typeparam>
+		/// <typeparam name="TIndex">Type of the index</typeparam>
+		public class IndexingWrapper<TValue, TIndex>
 		{
 			public TValue CurrentValue { get; private set; }
 
 			public TIndex IndexValue { get; private set; }
 
-			public IndexWrapper(TValue currentValue, TIndex indexValue)
+			public IndexingWrapper(TValue currentValue, TIndex indexValue)
 			{
 				CurrentValue = currentValue;
 				IndexValue = indexValue;
