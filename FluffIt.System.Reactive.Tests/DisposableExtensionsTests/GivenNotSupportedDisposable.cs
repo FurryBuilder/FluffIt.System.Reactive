@@ -2,7 +2,7 @@
 using System.Reactive.Disposables;
 
 using Fluff.Extensions;
-
+using FluffIt;
 using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

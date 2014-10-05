@@ -3,7 +3,6 @@ using System.Reactive;
 using System.Reactive.Linq;
 
 using Fluff.Extensions;
-using Fluff.StaticExtensions;
 
 using Microsoft.Reactive.Testing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

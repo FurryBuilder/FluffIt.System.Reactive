@@ -2,6 +2,7 @@
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Threading;
+using FluffIt;
 
 namespace Fluff.Extensions
 {
@@ -32,10 +33,10 @@ namespace Fluff.Extensions
 			var supported = false;
 
 			disposer
-				.As<SingleAssignmentDisposable>(d => { disposable.DisposeWith(d); supported = true; })
-				.As<MultipleAssignmentDisposable>(d => { disposable.DisposeWith(d); supported = true; })
-				.As<SerialDisposable>(d => { disposable.DisposeWith(d); supported = true; })
-				.As<CompositeDisposable>(d => { disposable.DisposeWith(d); supported = true; });
+				.As((SingleAssignmentDisposable d) => { disposable.DisposeWith(d); supported = true; })
+				.As((MultipleAssignmentDisposable d) => { disposable.DisposeWith(d); supported = true; })
+				.As((SerialDisposable d) => { disposable.DisposeWith(d); supported = true; })
+				.As((CompositeDisposable d) => { disposable.DisposeWith(d); supported = true; });
 
 			if (!supported)
 			{
