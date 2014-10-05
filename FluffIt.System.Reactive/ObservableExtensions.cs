@@ -55,7 +55,7 @@ namespace Fluff.Extensions
 		/// <param name="defaultValueFactory">Value provider when a default value is found</param>
 		/// <param name="valueTypeComparer">Comparer to determine if the value is a default value</param>
 		/// <returns>A new sequence of defaulted values</returns>
-		public static IObservable<TSource> Default<TSource>(this IObservable<TSource> source, Func<TSource> defaultValueFactory, [CanBeNull] IEqualityComparer<TSource> valueTypeComparer = null)
+		public static IObservable<TSource> Default<TSource>(this IObservable<TSource> source, Func<TSource> defaultValueFactory, IEqualityComparer<TSource> valueTypeComparer = null)
 		{
 			return source.Select(v => v.Default(defaultValueFactory, valueTypeComparer));
 		}
@@ -69,7 +69,7 @@ namespace Fluff.Extensions
 		/// <param name="onError">Action to execute when an error occured in the sequence</param>
 		/// <param name="onCompleted">Action to execute when the sequence completes</param>
 		/// <returns>A disposable that controls the lifetime of the sequence</returns>
-		public static IDisposable SubscribeSafe<TSource>(this IObservable<TSource> source, Action<TSource> onNext = null, [CanBeNull] Action<Exception> onError = null, [CanBeNull] Action onCompleted = null)
+		public static IDisposable SubscribeSafe<TSource>(this IObservable<TSource> source, Action<TSource> onNext = null, Action<Exception> onError = null, Action onCompleted = null)
 		{
 			return source
 				.Do(v => onNext.Maybe(a => a.Invoke(v)))
