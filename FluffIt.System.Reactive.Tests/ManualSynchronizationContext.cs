@@ -25,62 +25,33 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 using System;
-using System.Reactive;
-using System.Reactive.Linq;
-using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
+using System.Threading;
 
-namespace FluffIt.System.Reactive.Tests.ObservableExtensionsTests
+namespace FluffIt.System.Reactive.Tests
 {
-	[TestClass]
-	public class GivenUnitObservable
+	/// <summary>
+	/// Manually handle posts on synchronization contexts to support
+	/// synchroneous calls.
+	/// </summary>
+	public sealed class ManualSynchronizationContext : SynchronizationContext
 	{
-		[TestMethod]
-		public void WhenSelectUnit_ThenResultIsUnit()
+		private readonly List<Tuple<SendOrPostCallback, object>> _operationQueue
+			= new List<Tuple<SendOrPostCallback, object>>();
+
+		public override void Send(SendOrPostCallback callback, object state)
 		{
-			var validator = false;
-
-			var testScheduler = new TestScheduler();
-
-			var source = Observable
-				.Return(Unit.Default, testScheduler)
-				.SelectUnit();
-
-			testScheduler.AdvanceBy(1);
-
-			source.Subscribe(u =>
-			{
-				validator = true;
-				Assert.IsInstanceOfType(u, typeof(Unit));
-			});
-
-			testScheduler.AdvanceBy(1);
-
-			Assert.IsTrue(validator);
+			callback.Invoke(state);
 		}
 
-		[TestMethod]
-		public void WhenDefault_ThenResultIsSet()
+		public override void Post(SendOrPostCallback callback, object state)
 		{
-			var validator = false;
+			_operationQueue.Add(Tuple.Create(callback, state));
+		}
 
-			var testScheduler = new TestScheduler();
-
-			var source = Observable
-				.Return(null as Unit?, testScheduler)
-				.Default(() => Unit.Default);
-
-			testScheduler.AdvanceBy(1);
-
-			source.Subscribe(u =>
-			{
-				validator = true;
-				Assert.AreEqual(Unit.Default, u);
-			});
-
-			testScheduler.AdvanceBy(1);
-
-			Assert.IsTrue(validator);
+		public void Execute()
+		{
+			_operationQueue.ForEach(x => x.Item1(x.Item2));
 		}
 	}
 }

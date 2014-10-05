@@ -1,36 +1,42 @@
-http://cloc.sourceforge.net v 1.60  T=0.15 s (119.9 files/s, 8771.2 lines/s)
+http://cloc.sourceforge.net v 1.60  T=0.13 s (174.7 files/s, 12982.4 lines/s)
 --------------------------------------------------------------------------------------------------------------------------------------------
 File                                                                                                     blank        comment           code
 --------------------------------------------------------------------------------------------------------------------------------------------
-..\FluffIt.System.Reactive.Tests\ObservableExtensionsTests\GivenValueObservable.cs                          48              0            154
-..\FluffIt.System.Reactive.WinRT\FluffIt.System.Reactive.WinRT.csproj                                        0              7            120
-..\FluffIt.System.Reactive.WinPRT\FluffIt.System.Reactive.WinPRT.csproj                                      0              7             99
-..\FluffIt.System.Reactive.Tests\DisposableExtensionsTests\GivenSupportedDisposable.cs                      30              0             94
-..\FluffIt.System.Reactive.Tests\FluffIt.System.Reactive.Tests.csproj                                        0              7             94
-..\FluffIt.System.Reactive\ObservableExtensions.cs                                                          16             54             83
-..\FluffIt.System.Reactive.WPF\FluffIt.System.Reactive.WPF.csproj                                            0              7             60
-..\FluffIt.System.Reactive\FluffIt.System.Reactive.csproj                                                    0              7             54
-..\FluffIt.System.Reactive.Tests\DisposableExtensionsTests\GivenNotSupportedDisposable.cs                   12              0             52
-..\FluffIt.System.Reactive\DisposableExtensions.cs                                                          10              0             51
-..\FluffIt.System.Reactive.Tests\ObservableExtensionsTests\GivenUnitObservable.cs                           16              0             47
+..\FluffIt.System.Reactive.Tests\ObservableExtensionsTests\GivenValueObservable.cs                          47             24            154
+..\FluffIt.System.Reactive.WinRT\FluffIt.System.Reactive.WinRT.csproj                                        0              7            146
+..\FluffIt.System.Reactive.WinPRT\FluffIt.System.Reactive.WinPRT.csproj                                      0              7            125
+..\FluffIt.System.Reactive.Tests\FluffIt.System.Reactive.Tests.csproj                                        0              7            115
+..\FluffIt.System.Reactive.Tests\DisposableExtensionsTests\GivenSupportedDisposable.cs                      29             24             93
+..\FluffIt.System.Reactive\ObservableExtensions.cs                                                          17             78             84
+..\FluffIt.System.Reactive.WPF\FluffIt.System.Reactive.WPF.csproj                                            0              7             80
+..\FluffIt.System.Reactive\FluffIt.System.Reactive.csproj                                                    0              7             72
+..\FluffIt.System.Reactive\DisposableExtensions.cs                                                          11             24             52
+..\FluffIt.System.Reactive.Tests\DisposableExtensionsTests\GivenNotSupportedDisposable.cs                   11             24             52
+..\FluffIt.System.Reactive.Tests\ObservableExtensionsTests\GivenUnitObservable.cs                           15             24             47
+..\FluffIt.System.Reactive.Tests\ManualSynchronizationContext.cs                                             5             28             24
+..\FluffIt.System.Reactive\StaticExtensions\ObservableEx.cs                                                  3             27             23
 ..\FluffIt.System.Reactive.WinPRT\Properties\AssemblyInfo.cs                                                 4             16             17
 ..\FluffIt.System.Reactive\Properties\AssemblyInfo.cs                                                        9             17             16
 ..\FluffIt.System.Reactive.WPF\Properties\AssemblyInfo.cs                                                    4             17             15
 ..\FluffIt.System.Reactive.Tests\Properties\AssemblyInfo.cs                                                  4             17             15
 ..\FluffIt.System.Reactive.WinRT\Properties\AssemblyInfo.cs                                                  2             13             14
+..\FluffIt.System.Reactive.Tests\packages.config                                                             0              0             10
+..\FluffIt.System.Reactive.WinPRT\packages.config                                                            0              0              9
+..\FluffIt.System.Reactive.WPF\packages.config                                                               0              0              9
 ..\AppMultiPackages.xml                                                                                      0              0              6
 ..\Tools\Clockr.bat                                                                                          0              0              2
 --------------------------------------------------------------------------------------------------------------------------------------------
-SUM:                                                                                                       155            169            993
+SUM:                                                                                                       161            368           1180
 --------------------------------------------------------------------------------------------------------------------------------------------
 
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-C#                              11            155            134            558
-MSBuild scripts                  5              0             35            427
+C#                              13            161            333            606
+MSBuild scripts                  5              0             35            538
+ASP.Net                          3              0              0             28
 XML                              1              0              0              6
 DOS Batch                        1              0              0              2
 -------------------------------------------------------------------------------
-SUM:                            18            155            169            993
+SUM:                            23            161            368           1180
 -------------------------------------------------------------------------------

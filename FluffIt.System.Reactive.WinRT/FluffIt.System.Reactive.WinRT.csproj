@@ -113,6 +113,9 @@
     <Compile Include="..\FluffIt.System.Reactive\ObservableExtensions.cs">
       <Link>ObservableExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\FluffIt.System.Reactive\StaticExtensions\ObservableEx.cs">
+      <Link>Properties\StaticExtensions\ObservableEx.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

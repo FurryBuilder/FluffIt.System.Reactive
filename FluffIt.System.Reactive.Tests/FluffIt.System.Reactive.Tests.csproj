@@ -77,6 +77,7 @@
   <ItemGroup>
     <Compile Include="DisposableExtensionsTests\GivenNotSupportedDisposable.cs" />
     <Compile Include="DisposableExtensionsTests\GivenSupportedDisposable.cs" />
+    <Compile Include="ManualSynchronizationContext.cs" />
     <Compile Include="ObservableExtensionsTests\GivenUnitObservable.cs" />
     <Compile Include="ObservableExtensionsTests\GivenValueObservable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

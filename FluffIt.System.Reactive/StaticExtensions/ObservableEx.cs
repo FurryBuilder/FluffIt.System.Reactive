@@ -26,61 +26,28 @@
 
 using System;
 using System.Reactive;
+using System.Reactive.Concurrency;
 using System.Reactive.Linq;
-using Microsoft.Reactive.Testing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace FluffIt.System.Reactive.Tests.ObservableExtensionsTests
+namespace FluffIt.System.Reactive.StaticExtensions
 {
-	[TestClass]
-	public class GivenUnitObservable
+	/// <summary>
+	/// Provide extended methods to create observables.
+	/// </summary>
+	public static class ObservableEx
 	{
-		[TestMethod]
-		public void WhenSelectUnit_ThenResultIsUnit()
+		public static IObservable<Unit> DeferedStart(Action function, IScheduler scheduler)
 		{
-			var validator = false;
-
-			var testScheduler = new TestScheduler();
-
-			var source = Observable
-				.Return(Unit.Default, testScheduler)
-				.SelectUnit();
-
-			testScheduler.AdvanceBy(1);
-
-			source.Subscribe(u =>
-			{
-				validator = true;
-				Assert.IsInstanceOfType(u, typeof(Unit));
-			});
-
-			testScheduler.AdvanceBy(1);
-
-			Assert.IsTrue(validator);
+			return Observable
+				.Defer(() => Observable.Start(function, scheduler))
+				.SubscribeOn(scheduler);
 		}
 
-		[TestMethod]
-		public void WhenDefault_ThenResultIsSet()
+		public static IObservable<T> DeferedStart<T>(Func<T> function, IScheduler scheduler)
 		{
-			var validator = false;
-
-			var testScheduler = new TestScheduler();
-
-			var source = Observable
-				.Return(null as Unit?, testScheduler)
-				.Default(() => Unit.Default);
-
-			testScheduler.AdvanceBy(1);
-
-			source.Subscribe(u =>
-			{
-				validator = true;
-				Assert.AreEqual(Unit.Default, u);
-			});
-
-			testScheduler.AdvanceBy(1);
-
-			Assert.IsTrue(validator);
+			return Observable
+				.Defer(() => Observable.Start(function, scheduler))
+				.SubscribeOn(scheduler);
 		}
 	}
 }
