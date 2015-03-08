@@ -99,22 +99,22 @@ namespace FluffIt.System.Reactive
             var supported = false;
 
             disposer
-                .As((SingleAssignmentDisposable d) =>
+                .MaybeAs((SingleAssignmentDisposable d) =>
                 {
                     disposable.DisposeWith(d);
                     supported = true;
                 })
-                .As((MultipleAssignmentDisposable d) =>
+                .MaybeAs((MultipleAssignmentDisposable d) =>
                 {
                     disposable.DisposeWith(d);
                     supported = true;
                 })
-                .As((SerialDisposable d) =>
+                .MaybeAs((SerialDisposable d) =>
                 {
                     disposable.DisposeWith(d);
                     supported = true;
                 })
-                .As((CompositeDisposable d) =>
+                .MaybeAs((CompositeDisposable d) =>
                 {
                     disposable.DisposeWith(d);
                     supported = true;
