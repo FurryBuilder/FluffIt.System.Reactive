@@ -28,9 +28,11 @@ using System;
 using System.Reactive.Concurrency;
 using System.Reactive.Disposables;
 using System.Threading;
+using JetBrains.Annotations;
 
 namespace FluffIt.System.Reactive
 {
+    [PublicAPI]
     public static class DisposableExtensions
     {
         /// <summary>
@@ -39,7 +41,10 @@ namespace FluffIt.System.Reactive
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="disposer">The object to use as disposer</param>
         /// <exception cref="InvalidOperationException">Thrown if the SingleAssignmentDisposable has already been assigned to.</exception>
-        public static void DisposeWith(this IDisposable disposable, SingleAssignmentDisposable disposer)
+        [PublicAPI]
+        public static void DisposeWith(
+            [NotNull] this IDisposable disposable,
+            [NotNull] SingleAssignmentDisposable disposer)
         {
             disposer.Disposable = disposable;
         }
@@ -49,7 +54,10 @@ namespace FluffIt.System.Reactive
         /// </summary>
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="disposer">The object to use as disposer</param>
-        public static void DisposeWith(this IDisposable disposable, MultipleAssignmentDisposable disposer)
+        [PublicAPI]
+        public static void DisposeWith(
+            [NotNull] this IDisposable disposable,
+            [NotNull] MultipleAssignmentDisposable disposer)
         {
             disposer.Disposable = disposable;
         }
@@ -59,7 +67,8 @@ namespace FluffIt.System.Reactive
         /// </summary>
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="disposer">The object to use as disposer</param>
-        public static void DisposeWith(this IDisposable disposable, SerialDisposable disposer)
+        [PublicAPI]
+        public static void DisposeWith([NotNull] this IDisposable disposable, [NotNull] SerialDisposable disposer)
         {
             disposer.Disposable = disposable;
         }
@@ -70,7 +79,8 @@ namespace FluffIt.System.Reactive
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="disposer">The object to use as disposer</param>
         /// <exception cref="ArgumentNullException"><paramref name="disposable" /> is null.</exception>
-        public static void DisposeWith(this IDisposable disposable, CompositeDisposable disposer)
+        [PublicAPI]
+        public static void DisposeWith([NotNull] this IDisposable disposable, [NotNull] CompositeDisposable disposer)
         {
             disposer.Add(disposable);
         }
@@ -83,7 +93,8 @@ namespace FluffIt.System.Reactive
         /// <exception cref="InvalidOperationException">Thrown if the SingleAssignmentDisposable has already been assigned to.</exception>
         /// <exception cref="ArgumentNullException"><paramref name="disposable" /> is null.</exception>
         /// <exception cref="NotSupportedException">Unsupported disposer type</exception>
-        public static void DisposeWith(this IDisposable disposable, IDisposable disposer)
+        [PublicAPI]
+        public static void DisposeWith([NotNull] this IDisposable disposable, [NotNull] IDisposable disposer)
         {
             var supported = false;
 
@@ -121,7 +132,9 @@ namespace FluffIt.System.Reactive
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="scheduler">The scheduler to use when disposing the object</param>
         /// <returns>Returns a new disposable that handles disposal on a different scheduler</returns>
-        public static IDisposable DisposeOn(this IDisposable disposable, IScheduler scheduler)
+        /// <exception cref="ArgumentNullException"><paramref name="scheduler" /> or <paramref name="disposable" /> is null.</exception>
+        [PublicAPI, Pure]
+        public static IDisposable DisposeOn([NotNull] this IDisposable disposable, [NotNull] IScheduler scheduler)
         {
             return new ScheduledDisposable(scheduler, disposable);
         }
@@ -132,7 +145,11 @@ namespace FluffIt.System.Reactive
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="context">The context to use when disposing the object</param>
         /// <returns>Returns a new disposable that handles disposal on a different context</returns>
-        public static IDisposable DisposeOn(this IDisposable disposable, SynchronizationContext context)
+        /// <exception cref="ArgumentNullException"><paramref name="context" /> or <paramref name="disposable" /> is null.</exception>
+        [PublicAPI, Pure]
+        public static IDisposable DisposeOn(
+            [NotNull] this IDisposable disposable,
+            [NotNull] SynchronizationContext context)
         {
             return new ContextDisposable(context, disposable);
         }
@@ -142,7 +159,9 @@ namespace FluffIt.System.Reactive
         /// </summary>
         /// <param name="disposable">The disposable that will be reference counted</param>
         /// <returns>Returns a new disposable that handles disposal based on a reference counter</returns>
-        public static RefCountDisposable RefCounted(this IDisposable disposable)
+        /// <exception cref="ArgumentNullException"><paramref name="disposable" /> is null.</exception>
+        [PublicAPI, Pure]
+        public static RefCountDisposable RefCounted([NotNull] this IDisposable disposable)
         {
             return new RefCountDisposable(disposable);
         }

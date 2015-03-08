@@ -28,16 +28,19 @@ using System;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using JetBrains.Annotations;
 
 namespace FluffIt.System.Reactive.StaticExtensions
 {
     /// <summary>
     ///     Provide extended methods to create observables.
     /// </summary>
+    [PublicAPI]
     public static class ObservableEx
     {
         /// <exception cref="ArgumentNullException"><paramref name="function" /> is null.</exception>
-        public static IObservable<Unit> DeferedStart(Action function, IScheduler scheduler)
+        [PublicAPI]
+        public static IObservable<Unit> DeferedStart([NotNull] Action function, [NotNull] IScheduler scheduler)
         {
             return Observable
                 .Defer(() => Observable.Start(function, scheduler))
@@ -45,7 +48,8 @@ namespace FluffIt.System.Reactive.StaticExtensions
         }
 
         /// <exception cref="ArgumentNullException"><paramref name="function" /> is null.</exception>
-        public static IObservable<T> DeferedStart<T>(Func<T> function, IScheduler scheduler)
+        [PublicAPI]
+        public static IObservable<T> DeferedStart<T>([NotNull] Func<T> function, [NotNull] IScheduler scheduler)
         {
             return Observable
                 .Defer(() => Observable.Start(function, scheduler))

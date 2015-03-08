@@ -29,9 +29,11 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using JetBrains.Annotations;
 
 namespace FluffIt.System.Reactive
 {
+    [PublicAPI]
     public static class ObservableExtensions
     {
         /// <summary>
@@ -41,7 +43,8 @@ namespace FluffIt.System.Reactive
         /// <param name="source">Sequence to monitor</param>
         /// <returns>A new sequence of Units</returns>
         /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static IObservable<Unit> SelectUnit<TSource>(this IObservable<TSource> source)
+        [PublicAPI]
+        public static IObservable<Unit> SelectUnit<TSource>([NotNull] this IObservable<TSource> source)
         {
             return source.Select(_ => Unit.Default);
         }
@@ -56,10 +59,10 @@ namespace FluffIt.System.Reactive
         /// <param name="source">Sequence to alter</param>
         /// <param name="selector">A transform function to be applied on each element of the sequence</param>
         /// <returns>A new sequence of projected values</returns>
-        /// <exception cref="Exception">A delegate callback throws an exception. </exception>
+        [PublicAPI]
         public static IObservable<TResult> SelectManyDisposePrevious<TSource, TResult>(
-            this IObservable<TSource> source,
-            Func<TSource, IObservable<TResult>> selector)
+            [NotNull] this IObservable<TSource> source,
+            [NotNull] Func<TSource, IObservable<TResult>> selector)
         {
             var projectedSubscriptions = new SerialDisposable();
 
@@ -74,7 +77,8 @@ namespace FluffIt.System.Reactive
                         projectedSubscriptions.Dispose();
                         o.OnCompleted();
                     }
-                ));
+                )
+            );
         }
 
         /// <summary>
@@ -87,10 +91,11 @@ namespace FluffIt.System.Reactive
         /// <param name="valueTypeComparer">Comparer to determine if the value is a default value</param>
         /// <returns>A new sequence of defaulted values</returns>
         /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        [PublicAPI]
         public static IObservable<TSource> Default<TSource>(
-            this IObservable<TSource> source,
-            Func<TSource> defaultValueFactory,
-            IEqualityComparer<TSource> valueTypeComparer = null)
+            [NotNull] this IObservable<TSource> source,
+            [NotNull] Func<TSource> defaultValueFactory,
+            [CanBeNull] IEqualityComparer<TSource> valueTypeComparer = null)
         {
             return source.Select(v => v.Default(defaultValueFactory, valueTypeComparer));
         }
@@ -106,11 +111,12 @@ namespace FluffIt.System.Reactive
         /// <returns>A disposable that controls the lifetime of the sequence</returns>
         /// <exception cref="Exception">A delegate callback throws an exception. </exception>
         /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        [PublicAPI]
         public static IDisposable SubscribeSafe<TSource>(
-            this IObservable<TSource> source,
-            Action<TSource> onNext = null,
-            Action<Exception> onError = null,
-            Action onCompleted = null)
+            [NotNull] this IObservable<TSource> source,
+            [CanBeNull] Action<TSource> onNext = null,
+            [CanBeNull] Action<Exception> onError = null,
+            [CanBeNull] Action onCompleted = null)
         {
             return source
                 .Do(v => onNext.Maybe(a => a.Invoke(v)))
@@ -128,7 +134,9 @@ namespace FluffIt.System.Reactive
         /// <param name="source">Sequence to alter</param>
         /// <returns>A new sequence of values and their previous value</returns>
         /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static IObservable<PhasingWrapper<TSource>> WithPreviousValue<TSource>(this IObservable<TSource> source)
+        [PublicAPI]
+        public static IObservable<PhasingWrapper<TSource>> WithPreviousValue<TSource>(
+            [NotNull] this IObservable<TSource> source)
         {
             var previousValue = default(TSource);
 
@@ -138,7 +146,8 @@ namespace FluffIt.System.Reactive
                     var wrapper = new PhasingWrapper<TSource>(previousValue, v);
                     previousValue = v;
                     return wrapper;
-                });
+                }
+            );
         }
 
         /// <summary>
@@ -151,9 +160,10 @@ namespace FluffIt.System.Reactive
         /// <returns>A new sequence of values and their indexes</returns>
         /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
         /// <exception cref="Exception">A delegate callback throws an exception. </exception>
+        [PublicAPI]
         public static IObservable<IndexingWrapper<TSource, TIndex>> WithIndex<TSource, TIndex>(
-            this IObservable<TSource> source,
-            Func<TSource, TIndex> indexer)
+            [NotNull] this IObservable<TSource> source,
+            [NotNull] Func<TSource, TIndex> indexer)
         {
             return source.Select(v => new IndexingWrapper<TSource, TIndex>(v, indexer.Invoke(v)));
         }
@@ -165,7 +175,9 @@ namespace FluffIt.System.Reactive
         /// <param name="source">Sequence to alter</param>
         /// <returns>A new sequence of values and their indexes</returns>
         /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
-        public static IObservable<IndexingWrapper<TSource, int>> WithIndex<TSource>(this IObservable<TSource> source)
+        [PublicAPI]
+        public static IObservable<IndexingWrapper<TSource, int>> WithIndex<TSource>(
+            [NotNull] this IObservable<TSource> source)
         {
             var count = 0;
 
@@ -176,15 +188,19 @@ namespace FluffIt.System.Reactive
         ///     Wraps values from an observable sequence with the previous value from the same sequence.
         /// </summary>
         /// <typeparam name="T">Type of values in the sequence</typeparam>
+        [PublicAPI]
         public class PhasingWrapper<T>
         {
-            public PhasingWrapper(T previousValue, T currentValue)
+            internal PhasingWrapper([CanBeNull] T previousValue, [CanBeNull] T currentValue)
             {
                 PreviousValue = previousValue;
                 CurrentValue = currentValue;
             }
 
+            [PublicAPI]
             public T PreviousValue { get; private set; }
+
+            [PublicAPI]
             public T CurrentValue { get; private set; }
         }
 
@@ -193,15 +209,19 @@ namespace FluffIt.System.Reactive
         /// </summary>
         /// <typeparam name="TValue">Type of values in the sequence</typeparam>
         /// <typeparam name="TIndex">Type of the index</typeparam>
+        [PublicAPI]
         public class IndexingWrapper<TValue, TIndex>
         {
-            public IndexingWrapper(TValue currentValue, TIndex indexValue)
+            internal IndexingWrapper([CanBeNull] TValue currentValue, [NotNull] TIndex indexValue)
             {
                 CurrentValue = currentValue;
                 IndexValue = indexValue;
             }
 
+            [PublicAPI]
             public TValue CurrentValue { get; private set; }
+
+            [PublicAPI]
             public TIndex IndexValue { get; private set; }
         }
     }
