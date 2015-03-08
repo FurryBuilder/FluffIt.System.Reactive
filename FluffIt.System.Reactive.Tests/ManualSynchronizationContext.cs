@@ -30,28 +30,28 @@ using System.Threading;
 
 namespace FluffIt.System.Reactive.Tests
 {
-	/// <summary>
-	/// Manually handle posts on synchronization contexts to support
-	/// synchroneous calls.
-	/// </summary>
-	public sealed class ManualSynchronizationContext : SynchronizationContext
-	{
-		private readonly List<Tuple<SendOrPostCallback, object>> _operationQueue
-			= new List<Tuple<SendOrPostCallback, object>>();
+    /// <summary>
+    ///     Manually handle posts on synchronization contexts to support
+    ///     synchroneous calls.
+    /// </summary>
+    public sealed class ManualSynchronizationContext : SynchronizationContext
+    {
+        private readonly List<Tuple<SendOrPostCallback, object>> _operationQueue
+            = new List<Tuple<SendOrPostCallback, object>>();
 
-		public override void Send(SendOrPostCallback callback, object state)
-		{
-			callback.Invoke(state);
-		}
+        public override void Send(SendOrPostCallback callback, object state)
+        {
+            callback.Invoke(state);
+        }
 
-		public override void Post(SendOrPostCallback callback, object state)
-		{
-			_operationQueue.Add(Tuple.Create(callback, state));
-		}
+        public override void Post(SendOrPostCallback callback, object state)
+        {
+            _operationQueue.Add(Tuple.Create(callback, state));
+        }
 
-		public void Execute()
-		{
-			_operationQueue.ForEach(x => x.Item1(x.Item2));
-		}
-	}
+        public void Execute()
+        {
+            _operationQueue.ForEach(x => x.Item1(x.Item2));
+        }
+    }
 }

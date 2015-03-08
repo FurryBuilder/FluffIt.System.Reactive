@@ -31,23 +31,23 @@ using System.Reactive.Linq;
 
 namespace FluffIt.System.Reactive.StaticExtensions
 {
-	/// <summary>
-	/// Provide extended methods to create observables.
-	/// </summary>
-	public static class ObservableEx
-	{
-		public static IObservable<Unit> DeferedStart(Action function, IScheduler scheduler)
-		{
-			return Observable
-				.Defer(() => Observable.Start(function, scheduler))
-				.SubscribeOn(scheduler);
-		}
+    /// <summary>
+    ///     Provide extended methods to create observables.
+    /// </summary>
+    public static class ObservableEx
+    {
+        public static IObservable<Unit> DeferedStart(Action function, IScheduler scheduler)
+        {
+            return Observable
+                .Defer(() => Observable.Start(function, scheduler))
+                .SubscribeOn(scheduler);
+        }
 
-		public static IObservable<T> DeferedStart<T>(Func<T> function, IScheduler scheduler)
-		{
-			return Observable
-				.Defer(() => Observable.Start(function, scheduler))
-				.SubscribeOn(scheduler);
-		}
-	}
+        public static IObservable<T> DeferedStart<T>(Func<T> function, IScheduler scheduler)
+        {
+            return Observable
+                .Defer(() => Observable.Start(function, scheduler))
+                .SubscribeOn(scheduler);
+        }
+    }
 }
