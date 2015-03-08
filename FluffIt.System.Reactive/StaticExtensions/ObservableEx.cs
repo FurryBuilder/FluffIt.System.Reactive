@@ -28,26 +28,32 @@ using System;
 using System.Reactive;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
+using JetBrains.Annotations;
 
 namespace FluffIt.System.Reactive.StaticExtensions
 {
-	/// <summary>
-	/// Provide extended methods to create observables.
-	/// </summary>
-	public static class ObservableEx
-	{
-		public static IObservable<Unit> DeferedStart(Action function, IScheduler scheduler)
-		{
-			return Observable
-				.Defer(() => Observable.Start(function, scheduler))
-				.SubscribeOn(scheduler);
-		}
+    /// <summary>
+    ///     Provide extended methods to create observables.
+    /// </summary>
+    [PublicAPI]
+    public static class ObservableEx
+    {
+        /// <exception cref="ArgumentNullException"><paramref name="function" /> is null.</exception>
+        [PublicAPI]
+        public static IObservable<Unit> DeferedStart([NotNull] Action function, [NotNull] IScheduler scheduler)
+        {
+            return Observable
+                .Defer(() => Observable.Start(function, scheduler))
+                .SubscribeOn(scheduler);
+        }
 
-		public static IObservable<T> DeferedStart<T>(Func<T> function, IScheduler scheduler)
-		{
-			return Observable
-				.Defer(() => Observable.Start(function, scheduler))
-				.SubscribeOn(scheduler);
-		}
-	}
+        /// <exception cref="ArgumentNullException"><paramref name="function" /> is null.</exception>
+        [PublicAPI]
+        public static IObservable<T> DeferedStart<T>([NotNull] Func<T> function, [NotNull] IScheduler scheduler)
+        {
+            return Observable
+                .Defer(() => Observable.Start(function, scheduler))
+                .SubscribeOn(scheduler);
+        }
+    }
 }

@@ -31,57 +31,57 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FluffIt.System.Reactive.Tests.DisposableExtensionsTests
 {
-	[TestClass]
-	public class GivenNotSupportedDisposable
-	{
-		[TestMethod]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void WhenDisposableEmpty_ThenThrow()
-		{
-			var disposable = new BooleanDisposable();
-			var disposer = Disposable.Empty;
+    [TestClass]
+    public class GivenNotSupportedDisposable
+    {
+        [TestMethod]
+        [ExpectedException(typeof (NotSupportedException))]
+        public void WhenDisposableEmpty_ThenThrow()
+        {
+            var disposable = new BooleanDisposable();
+            var disposer = Disposable.Empty;
 
-			disposable.DisposeWith(disposer);
-		}
+            disposable.DisposeWith(disposer);
+        }
 
-		[TestMethod]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void WhenCancellationDisposable_ThenThrow()
-		{
-			var disposable = new BooleanDisposable();
-			var disposer = new CancellationDisposable();
+        [TestMethod]
+        [ExpectedException(typeof (NotSupportedException))]
+        public void WhenCancellationDisposable_ThenThrow()
+        {
+            var disposable = new BooleanDisposable();
+            var disposer = new CancellationDisposable();
 
-			disposable.DisposeWith(disposer);
-		}
+            disposable.DisposeWith(disposer);
+        }
 
-		[TestMethod]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void WhenRefCountDisposable_ThenThrow()
-		{
-			var disposable = new BooleanDisposable();
-			var disposer = new RefCountDisposable(disposable);
-			
-			disposable.DisposeWith(disposer);
-		}
+        [TestMethod]
+        [ExpectedException(typeof (NotSupportedException))]
+        public void WhenRefCountDisposable_ThenThrow()
+        {
+            var disposable = new BooleanDisposable();
+            var disposer = new RefCountDisposable(disposable);
 
-		[TestMethod]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void WhenScheduledDisposable_ThenThrow()
-		{
-			var disposable = new BooleanDisposable();
-			var disposer = new ScheduledDisposable(new TestScheduler(), disposable);
+            disposable.DisposeWith(disposer);
+        }
 
-			disposable.DisposeWith(disposer);
-		}
+        [TestMethod]
+        [ExpectedException(typeof (NotSupportedException))]
+        public void WhenScheduledDisposable_ThenThrow()
+        {
+            var disposable = new BooleanDisposable();
+            var disposer = new ScheduledDisposable(new TestScheduler(), disposable);
 
-		[TestMethod]
-		[ExpectedException(typeof(NotSupportedException))]
-		public void WhenUnsupportedUntypedDisposable_ThenThrow()
-		{
-			var disposable = new BooleanDisposable();
-			var disposer = Disposable.Empty;
+            disposable.DisposeWith(disposer);
+        }
 
-			disposable.DisposeWith(disposer.As<IDisposable>());
-		}
-	}
+        [TestMethod]
+        [ExpectedException(typeof (NotSupportedException))]
+        public void WhenUnsupportedUntypedDisposable_ThenThrow()
+        {
+            var disposable = new BooleanDisposable();
+            var disposer = Disposable.Empty;
+
+            disposable.DisposeWith(disposer.As<IDisposable>());
+        }
+    }
 }

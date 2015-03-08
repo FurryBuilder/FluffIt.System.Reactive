@@ -29,160 +29,200 @@ using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using JetBrains.Annotations;
 
 namespace FluffIt.System.Reactive
 {
-	public static class ObservableExtensions
-	{
-		/// <summary>
-		/// Project each element of an observable sequence into a generic value representing nothing.
-		/// </summary>
-		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
-		/// <param name="source">Sequence to monitor</param>
-		/// <returns>A new sequence of Units</returns>
-		public static IObservable<Unit> SelectUnit<TSource>(this IObservable<TSource> source)
-		{
-			return source.Select(_ => Unit.Default);
-		}
+    [PublicAPI]
+    public static class ObservableExtensions
+    {
+        /// <summary>
+        ///     Project each element of an observable sequence into a generic value representing nothing.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
+        /// <param name="source">Sequence to monitor</param>
+        /// <returns>A new sequence of Units</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        [PublicAPI]
+        public static IObservable<Unit> SelectUnit<TSource>([NotNull] this IObservable<TSource> source)
+        {
+            return source.Select(_ => Unit.Default);
+        }
 
-		/// <summary>
-		/// Project each element of the source observable sequence to the other observable sequence and merges the
-		/// resulting observable sequences into one observable sequence while stopping work on the previous inner sequence
-		/// when a new value arrives before completion.
-		/// </summary>
-		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
-		/// <typeparam name="TResult">Type of the elements in the new sequence</typeparam>
-		/// <param name="source">Sequence to alter</param>
-		/// <param name="selector">A transform function to be applied on each element of the sequence</param>
-		/// <returns>A new sequence of projected values</returns>
-		public static IObservable<TResult> SelectManyDisposePrevious<TSource, TResult>(this IObservable<TSource> source, Func<TSource, IObservable<TResult>> selector)
-		{
-			var projectedSubscriptions = new SerialDisposable();
+        /// <summary>
+        ///     Project each element of the source observable sequence to the other observable sequence and merges the
+        ///     resulting observable sequences into one observable sequence while stopping work on the previous inner sequence
+        ///     when a new value arrives before completion.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
+        /// <typeparam name="TResult">Type of the elements in the new sequence</typeparam>
+        /// <param name="source">Sequence to alter</param>
+        /// <param name="selector">A transform function to be applied on each element of the sequence</param>
+        /// <returns>A new sequence of projected values</returns>
+        [PublicAPI]
+        public static IObservable<TResult> SelectManyDisposePrevious<TSource, TResult>(
+            [NotNull] this IObservable<TSource> source,
+            [NotNull] Func<TSource, IObservable<TResult>> selector)
+        {
+            var projectedSubscriptions = new SerialDisposable();
 
-			return Observable.Create<TResult>(o => source.SubscribeSafe(
-				v => selector(v)
-					.Subscribe(o.OnNext, o.OnError, () => { })
-					.DisposeWith(projectedSubscriptions),
-				o.OnError,
-				() =>
-				{
-					projectedSubscriptions.Dispose();
-					o.OnCompleted();
-				}
-			));
-		}
+            return Observable.Create<TResult>(
+                o => source.SubscribeSafe(
+                    v => selector(v)
+                        .Subscribe(o.OnNext, o.OnError, () => { })
+                        .DisposeWith(projectedSubscriptions),
+                    o.OnError,
+                    () =>
+                    {
+                        projectedSubscriptions.Dispose();
+                        o.OnCompleted();
+                    }
+                )
+            );
+        }
 
-		/// <summary>
-		/// Replace each element of an observable sequence into a specified value when the source is
-		/// considered to be a default value for the specified type.
-		/// </summary>
-		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
-		/// <param name="source">Sequence to alter</param>
-		/// <param name="defaultValueFactory">Value provider when a default value is found</param>
-		/// <param name="valueTypeComparer">Comparer to determine if the value is a default value</param>
-		/// <returns>A new sequence of defaulted values</returns>
-		public static IObservable<TSource> Default<TSource>(this IObservable<TSource> source, Func<TSource> defaultValueFactory, IEqualityComparer<TSource> valueTypeComparer = null)
-		{
-			return source.Select(v => v.Default(defaultValueFactory, valueTypeComparer));
-		}
+        /// <summary>
+        ///     Replace each element of an observable sequence into a specified value when the source is
+        ///     considered to be a default value for the specified type.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
+        /// <param name="source">Sequence to alter</param>
+        /// <param name="defaultValueFactory">Value provider when a default value is found</param>
+        /// <param name="valueTypeComparer">Comparer to determine if the value is a default value</param>
+        /// <returns>A new sequence of defaulted values</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        [PublicAPI]
+        public static IObservable<TSource> Default<TSource>(
+            [NotNull] this IObservable<TSource> source,
+            [NotNull] Func<TSource> defaultValueFactory,
+            [CanBeNull] IEqualityComparer<TSource> valueTypeComparer = null)
+        {
+            return source.Select(v => v.Default(defaultValueFactory, valueTypeComparer));
+        }
 
-		/// <summary>
-		/// Subscribe to an observable sequence while rerouting errors happening on the onNext channel to the onError channel.
-		/// </summary>
-		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
-		/// <param name="source">Sequence to subscribe to</param>
-		/// <param name="onNext">Action to execute when a new value is passed in the sequence</param>
-		/// <param name="onError">Action to execute when an error occured in the sequence</param>
-		/// <param name="onCompleted">Action to execute when the sequence completes</param>
-		/// <returns>A disposable that controls the lifetime of the sequence</returns>
-		public static IDisposable SubscribeSafe<TSource>(this IObservable<TSource> source, Action<TSource> onNext = null, Action<Exception> onError = null, Action onCompleted = null)
-		{
-			return source
-				.Do(v => onNext.Maybe(a => a.Invoke(v)))
-				.Subscribe(
-					_ => { },
-					ex => onError.Maybe(a => a.Invoke(ex)),
-					() => onCompleted.Maybe(a => a.Invoke())
-				);
-		}
+        /// <summary>
+        ///     Subscribe to an observable sequence while rerouting errors happening on the onNext channel to the onError channel.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
+        /// <param name="source">Sequence to subscribe to</param>
+        /// <param name="onNext">Action to execute when a new value is passed in the sequence</param>
+        /// <param name="onError">Action to execute when an error occured in the sequence</param>
+        /// <param name="onCompleted">Action to execute when the sequence completes</param>
+        /// <returns>A disposable that controls the lifetime of the sequence</returns>
+        /// <exception cref="Exception">A delegate callback throws an exception. </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        [PublicAPI]
+        public static IDisposable SubscribeSafe<TSource>(
+            [NotNull] this IObservable<TSource> source,
+            [CanBeNull] Action<TSource> onNext = null,
+            [CanBeNull] Action<Exception> onError = null,
+            [CanBeNull] Action onCompleted = null)
+        {
+            return source
+                .Do(v => onNext.Maybe(a => a.Invoke(v)))
+                .Subscribe(
+                    _ => { },
+                    ex => onError.Maybe(a => a.Invoke(ex)),
+                    () => onCompleted.Maybe(a => a.Invoke())
+                );
+        }
 
-		/// <summary>
-		/// Reinject the previous value from the observable sequence into the new sequence.
-		/// </summary>
-		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
-		/// <param name="source">Sequence to alter</param>
-		/// <returns>A new sequence of values and their previous value</returns>
-		public static IObservable<PhasingWrapper<TSource>> WithPreviousValue<TSource>(this IObservable<TSource> source)
-		{
-			var previousValue = default(TSource);
+        /// <summary>
+        ///     Reinject the previous value from the observable sequence into the new sequence.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
+        /// <param name="source">Sequence to alter</param>
+        /// <returns>A new sequence of values and their previous value</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        [PublicAPI]
+        public static IObservable<PhasingWrapper<TSource>> WithPreviousValue<TSource>(
+            [NotNull] this IObservable<TSource> source)
+        {
+            var previousValue = default(TSource);
 
-			return source.Select(v =>
-			{
-				var wrapper = new PhasingWrapper<TSource>(previousValue, v);
-				previousValue = v;
-				return wrapper;
-			});
-		}
+            return source.Select(
+                v =>
+                {
+                    var wrapper = new PhasingWrapper<TSource>(previousValue, v);
+                    previousValue = v;
+                    return wrapper;
+                }
+            );
+        }
 
-		/// <summary>
-		/// Wraps values from an observable sequence with the previous value from the same sequence.
-		/// </summary>
-		/// <typeparam name="T">Type of values in the sequence</typeparam>
-		public class PhasingWrapper<T>
-		{
-			public T PreviousValue { get; private set; }
+        /// <summary>
+        ///     Inject an index into the obserrvable sequence.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
+        /// <typeparam name="TIndex">Type of the index to generate</typeparam>
+        /// <param name="source">Sequence to alter</param>
+        /// <param name="indexer">Method to generate an index from a source value</param>
+        /// <returns>A new sequence of values and their indexes</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="Exception">A delegate callback throws an exception. </exception>
+        [PublicAPI]
+        public static IObservable<IndexingWrapper<TSource, TIndex>> WithIndex<TSource, TIndex>(
+            [NotNull] this IObservable<TSource> source,
+            [NotNull] Func<TSource, TIndex> indexer)
+        {
+            return source.Select(v => new IndexingWrapper<TSource, TIndex>(v, indexer.Invoke(v)));
+        }
 
-			public T CurrentValue { get; private set; }
+        /// <summary>
+        ///     Inject a sequential index into the observable sequence.
+        /// </summary>
+        /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
+        /// <param name="source">Sequence to alter</param>
+        /// <returns>A new sequence of values and their indexes</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        [PublicAPI]
+        public static IObservable<IndexingWrapper<TSource, int>> WithIndex<TSource>(
+            [NotNull] this IObservable<TSource> source)
+        {
+            var count = 0;
 
-			public PhasingWrapper(T previousValue, T currentValue)
-			{
-				PreviousValue = previousValue;
-				CurrentValue = currentValue;
-			}
-		}
+            return source.Select(v => new IndexingWrapper<TSource, int>(v, ++count));
+        }
 
-		/// <summary>
-		/// Inject an index into the obserrvable sequence.
-		/// </summary>
-		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
-		/// <typeparam name="TIndex">Type of the index to generate</typeparam>
-		/// <param name="source">Sequence to alter</param>
-		/// <param name="indexor">Method to generate an index from a source value</param>
-		/// <returns>A new sequence of values and their indexes</returns>
-		public static IObservable<IndexingWrapper<TSource, TIndex>> WithIndex<TSource, TIndex>(this IObservable<TSource> source, Func<TSource, TIndex> indexor)
-		{
-			return source.Select(v => new IndexingWrapper<TSource, TIndex>(v, indexor.Invoke(v)));
-		}
+        /// <summary>
+        ///     Wraps values from an observable sequence with the previous value from the same sequence.
+        /// </summary>
+        /// <typeparam name="T">Type of values in the sequence</typeparam>
+        [PublicAPI]
+        public class PhasingWrapper<T>
+        {
+            internal PhasingWrapper([CanBeNull] T previousValue, [CanBeNull] T currentValue)
+            {
+                PreviousValue = previousValue;
+                CurrentValue = currentValue;
+            }
 
-		/// <summary>
-		/// Inject a sequential index into the observable sequence.
-		/// </summary>
-		/// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
-		/// <param name="source">Sequence to alter</param>
-		/// <returns>A new sequence of values and their indexes</returns>
-		public static IObservable<IndexingWrapper<TSource, int>> WithIndex<TSource>(this IObservable<TSource> source)
-		{
-			var count = 0;
+            [PublicAPI]
+            public T PreviousValue { get; private set; }
 
-			return source.Select(v => new IndexingWrapper<TSource, int>(v, ++count));
-		}
+            [PublicAPI]
+            public T CurrentValue { get; private set; }
+        }
 
-		/// <summary>
-		/// Wraps values from an observable sequence with indexing information.
-		/// </summary>
-		/// <typeparam name="TValue">Type of values in the sequence</typeparam>
-		/// <typeparam name="TIndex">Type of the index</typeparam>
-		public class IndexingWrapper<TValue, TIndex>
-		{
-			public TValue CurrentValue { get; private set; }
+        /// <summary>
+        ///     Wraps values from an observable sequence with indexing information.
+        /// </summary>
+        /// <typeparam name="TValue">Type of values in the sequence</typeparam>
+        /// <typeparam name="TIndex">Type of the index</typeparam>
+        [PublicAPI]
+        public class IndexingWrapper<TValue, TIndex>
+        {
+            internal IndexingWrapper([CanBeNull] TValue currentValue, [NotNull] TIndex indexValue)
+            {
+                CurrentValue = currentValue;
+                IndexValue = indexValue;
+            }
 
-			public TIndex IndexValue { get; private set; }
+            [PublicAPI]
+            public TValue CurrentValue { get; private set; }
 
-			public IndexingWrapper(TValue currentValue, TIndex indexValue)
-			{
-				CurrentValue = currentValue;
-				IndexValue = indexValue;
-			}
-		}
-	}
+            [PublicAPI]
+            public TIndex IndexValue { get; private set; }
+        }
+    }
 }
