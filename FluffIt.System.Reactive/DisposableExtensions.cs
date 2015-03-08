@@ -38,6 +38,7 @@ namespace FluffIt.System.Reactive
         /// </summary>
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="disposer">The object to use as disposer</param>
+        /// <exception cref="InvalidOperationException">Thrown if the SingleAssignmentDisposable has already been assigned to.</exception>
         public static void DisposeWith(this IDisposable disposable, SingleAssignmentDisposable disposer)
         {
             disposer.Disposable = disposable;
@@ -68,6 +69,7 @@ namespace FluffIt.System.Reactive
         /// </summary>
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="disposer">The object to use as disposer</param>
+        /// <exception cref="ArgumentNullException"><paramref name="disposable" /> is null.</exception>
         public static void DisposeWith(this IDisposable disposable, CompositeDisposable disposer)
         {
             disposer.Add(disposable);
@@ -78,35 +80,34 @@ namespace FluffIt.System.Reactive
         /// </summary>
         /// <param name="disposable">The object to be disposed</param>
         /// <param name="disposer">The object to use as disposer</param>
+        /// <exception cref="InvalidOperationException">Thrown if the SingleAssignmentDisposable has already been assigned to.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="disposable" /> is null.</exception>
+        /// <exception cref="NotSupportedException">Unsupported disposer type</exception>
         public static void DisposeWith(this IDisposable disposable, IDisposable disposer)
         {
             var supported = false;
 
             disposer
-                .As(
-                    (SingleAssignmentDisposable d) =>
-                    {
-                        disposable.DisposeWith(d);
-                        supported = true;
-                    })
-                .As(
-                    (MultipleAssignmentDisposable d) =>
-                    {
-                        disposable.DisposeWith(d);
-                        supported = true;
-                    })
-                .As(
-                    (SerialDisposable d) =>
-                    {
-                        disposable.DisposeWith(d);
-                        supported = true;
-                    })
-                .As(
-                    (CompositeDisposable d) =>
-                    {
-                        disposable.DisposeWith(d);
-                        supported = true;
-                    });
+                .As((SingleAssignmentDisposable d) =>
+                {
+                    disposable.DisposeWith(d);
+                    supported = true;
+                })
+                .As((MultipleAssignmentDisposable d) =>
+                {
+                    disposable.DisposeWith(d);
+                    supported = true;
+                })
+                .As((SerialDisposable d) =>
+                {
+                    disposable.DisposeWith(d);
+                    supported = true;
+                })
+                .As((CompositeDisposable d) =>
+                {
+                    disposable.DisposeWith(d);
+                    supported = true;
+                });
 
             if (!supported)
             {

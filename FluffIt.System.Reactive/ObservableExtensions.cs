@@ -40,6 +40,7 @@ namespace FluffIt.System.Reactive
         /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
         /// <param name="source">Sequence to monitor</param>
         /// <returns>A new sequence of Units</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
         public static IObservable<Unit> SelectUnit<TSource>(this IObservable<TSource> source)
         {
             return source.Select(_ => Unit.Default);
@@ -55,6 +56,7 @@ namespace FluffIt.System.Reactive
         /// <param name="source">Sequence to alter</param>
         /// <param name="selector">A transform function to be applied on each element of the sequence</param>
         /// <returns>A new sequence of projected values</returns>
+        /// <exception cref="Exception">A delegate callback throws an exception. </exception>
         public static IObservable<TResult> SelectManyDisposePrevious<TSource, TResult>(
             this IObservable<TSource> source,
             Func<TSource, IObservable<TResult>> selector)
@@ -72,7 +74,7 @@ namespace FluffIt.System.Reactive
                         projectedSubscriptions.Dispose();
                         o.OnCompleted();
                     }
-                    ));
+                ));
         }
 
         /// <summary>
@@ -84,6 +86,7 @@ namespace FluffIt.System.Reactive
         /// <param name="defaultValueFactory">Value provider when a default value is found</param>
         /// <param name="valueTypeComparer">Comparer to determine if the value is a default value</param>
         /// <returns>A new sequence of defaulted values</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
         public static IObservable<TSource> Default<TSource>(
             this IObservable<TSource> source,
             Func<TSource> defaultValueFactory,
@@ -101,6 +104,8 @@ namespace FluffIt.System.Reactive
         /// <param name="onError">Action to execute when an error occured in the sequence</param>
         /// <param name="onCompleted">Action to execute when the sequence completes</param>
         /// <returns>A disposable that controls the lifetime of the sequence</returns>
+        /// <exception cref="Exception">A delegate callback throws an exception. </exception>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
         public static IDisposable SubscribeSafe<TSource>(
             this IObservable<TSource> source,
             Action<TSource> onNext = null,
@@ -122,6 +127,7 @@ namespace FluffIt.System.Reactive
         /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
         /// <param name="source">Sequence to alter</param>
         /// <returns>A new sequence of values and their previous value</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
         public static IObservable<PhasingWrapper<TSource>> WithPreviousValue<TSource>(this IObservable<TSource> source)
         {
             var previousValue = default(TSource);
@@ -141,13 +147,15 @@ namespace FluffIt.System.Reactive
         /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
         /// <typeparam name="TIndex">Type of the index to generate</typeparam>
         /// <param name="source">Sequence to alter</param>
-        /// <param name="indexor">Method to generate an index from a source value</param>
+        /// <param name="indexer">Method to generate an index from a source value</param>
         /// <returns>A new sequence of values and their indexes</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
+        /// <exception cref="Exception">A delegate callback throws an exception. </exception>
         public static IObservable<IndexingWrapper<TSource, TIndex>> WithIndex<TSource, TIndex>(
             this IObservable<TSource> source,
-            Func<TSource, TIndex> indexor)
+            Func<TSource, TIndex> indexer)
         {
-            return source.Select(v => new IndexingWrapper<TSource, TIndex>(v, indexor.Invoke(v)));
+            return source.Select(v => new IndexingWrapper<TSource, TIndex>(v, indexer.Invoke(v)));
         }
 
         /// <summary>
@@ -156,6 +164,7 @@ namespace FluffIt.System.Reactive
         /// <typeparam name="TSource">Type of the elements in the sequence</typeparam>
         /// <param name="source">Sequence to alter</param>
         /// <returns>A new sequence of values and their indexes</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source" /> is null.</exception>
         public static IObservable<IndexingWrapper<TSource, int>> WithIndex<TSource>(this IObservable<TSource> source)
         {
             var count = 0;

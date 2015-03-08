@@ -36,6 +36,7 @@ namespace FluffIt.System.Reactive.StaticExtensions
     /// </summary>
     public static class ObservableEx
     {
+        /// <exception cref="ArgumentNullException"><paramref name="function" /> is null.</exception>
         public static IObservable<Unit> DeferedStart(Action function, IScheduler scheduler)
         {
             return Observable
@@ -43,6 +44,7 @@ namespace FluffIt.System.Reactive.StaticExtensions
                 .SubscribeOn(scheduler);
         }
 
+        /// <exception cref="ArgumentNullException"><paramref name="function" /> is null.</exception>
         public static IObservable<T> DeferedStart<T>(Func<T> function, IScheduler scheduler)
         {
             return Observable
