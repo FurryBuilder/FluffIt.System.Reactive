@@ -1,6 +1,0 @@
-<?xml version="1.0"?>
-<NuGetterPackages>
-	<NuGetterPackage name="FluffIt.System.Reactive">
-		<NuSpecFilePath>FluffIt.System.Reactive\FluffIt.System.Reactive.nuspec</NuSpecFilePath>
-	</NuGetterPackage>
-</NuGetterPackages>
