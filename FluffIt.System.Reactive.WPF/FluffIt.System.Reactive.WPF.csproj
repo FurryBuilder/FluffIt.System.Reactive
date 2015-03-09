@@ -37,7 +37,7 @@
   <ItemGroup>
     <Reference Include="FluffIt.WPF, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FluffIt.0.1.1.12\lib\net45\FluffIt.WPF.dll</HintPath>
+      <HintPath>..\packages\FluffIt.0.1.1.13\lib\net45\FluffIt.WPF.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations">
       <HintPath>..\packages\JetBrains.Annotations.8.0.5.0\lib\net20\JetBrains.Annotations.dll</HintPath>

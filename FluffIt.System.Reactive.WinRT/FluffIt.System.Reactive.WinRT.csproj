@@ -121,7 +121,7 @@
   <ItemGroup>
     <Reference Include="FluffIt.WinRT, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\FluffIt.0.1.1.12\lib\netcore451\FluffIt.WinRT.dll</HintPath>
+      <HintPath>..\packages\FluffIt.0.1.1.13\lib\netcore451\FluffIt.WinRT.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations.PCL1">
       <HintPath>..\packages\JetBrains.Annotations.8.0.5.0\lib\portable-net4+sl4+wp7+netcore45\JetBrains.Annotations.PCL1.dll</HintPath>
